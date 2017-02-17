@@ -68,7 +68,7 @@ void main()
     float t = 0.0;
     for (float h = -0.3; h < 0.3; h += 0.03)
     {
-        t += step(h, c);
+        t += smoothstep(h-0.003, h+0.003, c);
     }
 
     //vec3 col = vec3(step(0.0, c) * 0.5 + step(0.07, c) * 0.5);
