@@ -24,6 +24,15 @@ float circle(vec2 p, vec2 c, float r)
 
 void main()
 {
+#if 1
+    float pause = floor(iGlobalTime / (2.0 * PI));
+    if (mod(pause, 2.0) == 0.0)
+    {
+        gl_FragColor = vec4(0, 0, 0, 1);
+        return;
+    }
+#endif
+
     float aspect = iResolution.x / iResolution.y;
     vec2 uv = gl_FragCoord.xy / iResolution.xy * 2.0 - 1.0;
     uv.x *= aspect;
@@ -32,9 +41,17 @@ void main()
     const float n = 6.0;
     for (float i = 0.0; i < n; i++)
     {
-        float alpha = i / n * 2.0 * PI + iGlobalTime * 0.3;
+        float alpha = i / n * 2.0 * PI; // + iGlobalTime * 0.3;
         c = min(c, circle(uv, vec2(cos(alpha), sin(alpha)) * 0.5, 0.1));
+        float beta = alpha + (PI / 6.0);
+        c = min(c, circle(uv, vec2(cos(beta), sin(beta)) * 0.75, 0.1));
     }
+
+    float dist = length(uv);
+
+    vec3 col = gradient(dist * 2.0 + c * 2.4 + 0.5 * sin(iGlobalTime * 0.8));
     
-    gl_FragColor = vec4(gradient(c + iGlobalTime * 0.2), 1);
+    col = pow(col, vec3(2.2));
+
+    gl_FragColor = vec4(col, 1);
 }
